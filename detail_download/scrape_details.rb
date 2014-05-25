@@ -24,13 +24,11 @@ end
 def parse_wide_table doc, table_id
   d = []
   headers = doc.css("table##{table_id} th").collect {|h| h.text.strip}
-  puts headers.length
   doc.css("table##{table_id} tr").each_with_index do |row, index|
     if index == 0
       next
     end
     values = row.css("td").collect {|v| v.text.strip}
-    puts values.length
     dd = Hash[headers.zip(values)]
     d << dd
   end
@@ -70,7 +68,8 @@ def parse_details parcel_id
   all_data = save_wide doc, all_data, 'kingcounty_gov_cphContent_GridViewTaxRoll', "tax_roll"
   all_data = save_wide doc, all_data, 'kingcounty_gov_cphContent_GridViewPermits', "permits"
 
-  puts all_data.inspect
+  # puts doc.text
+
   all_data
 end
 
@@ -91,9 +90,19 @@ end
 ids = get_ids()
 
 ids.each do |id|
+  if !id
+    next
+  end
+  if File.exists? File.join(OUTPUT_DIR, id + ".json")
+    puts "skipping #{id}"
+    next
+  end
+
   begin
   data = parse_details id
   save_details(id, data)
+  puts id
+  puts data.length
   rescue
     puts "ERROR: #{id}"
   end
