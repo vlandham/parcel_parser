@@ -5,4 +5,4 @@ var fs = require('fs'),
 
 clean = require("./lib/clean");
 
-clean("../data");
+clean("../data_test");
